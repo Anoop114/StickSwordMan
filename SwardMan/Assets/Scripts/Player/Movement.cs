@@ -4,6 +4,7 @@ public class Movement : MonoBehaviour
 {
     [Header("Refrance")]
     public GameObject player;
+    public GameObject playerBody;
     public float speed;
     public Animator palyerAnimator;
     void FixedUpdate()
@@ -16,11 +17,12 @@ public class Movement : MonoBehaviour
         {
             palyerAnimator.SetBool("run",false);
         }
+        playerBody.transform.localRotation = Quaternion.Euler(0,0,0);
     }
     
     private void MovePlayer()
     {
         player.transform.position = new Vector3(player.transform.position.x,player.transform.position.y,player.transform.position.z+speed*Time.deltaTime);
-        player.transform.localRotation = Quaternion.Euler(player.transform.localRotation.eulerAngles.x, player.transform.localRotation.eulerAngles.y, player.transform.localRotation.eulerAngles.z);
+       
     }
 }

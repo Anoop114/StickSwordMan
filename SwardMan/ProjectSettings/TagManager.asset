@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Sward
   - Shield
+  - EnemySward
+  - Enemy
   layers:
   - Default
   - TransparentFX
