@@ -21,10 +21,13 @@ public class PlayerAttack : MonoBehaviour
             enemyHealth.enemyHealth -= playerHealth.swardDamage;
             if(enemyHealth.enemyHealth <= 0)
             {
+                playerAttack();
                 Destroy(other.gameObject);
-                playerAnimate.SetBool("attack",false);
             }
         }
     }
-    
+    void playerAttack()
+    {
+        playerAnimate.SetBool("attack",false);
+    }
 }
