@@ -3,41 +3,38 @@ using UnityEngine;
 public class EnemyFollow : MonoBehaviour
 {
     [Header("Refrance")]
-    public GameObject player;
-    public Transform enemy;
+    // public GameObject enemy;
     public float moveSpeed = 1f;
-    public Animator enemyAnimator;
+    private Animator enemyAnimator;
 
     private Rigidbody enemyBody;
-    private Movement playerAnimate;
+    private Transform enemyTransform;
+    private Animator playerAnimate;
 
     void Start()
     {
-        enemyBody = this.GetComponent<Rigidbody>();
-        playerAnimate = player.GetComponent<Movement>();
+        
+        playerAnimate = this.GetComponent<Animator>();
     }
-    void OnTriggerStay(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if(other.CompareTag("Enemy"))
         {
-            Vector3 direction = other.transform.position - transform.position;
-            MoveTowardsPlayer(direction);
+            enemyBody = other.gameObject.GetComponent<Rigidbody>();
+            enemyAnimator = other.gameObject.GetComponent<Animator>();
+            enemyTransform = other.gameObject.GetComponent<Transform>();
+
+            Vector3 direction = transform.position - other.transform.position;
+            MoveTowardsPlayer(direction,enemyTransform);
             enemyAnimator.SetBool("attack",true);
-            playerAnimate.palyerAnimator.SetBool("attack",true);
+            playerAnimate.SetBool("attack",true);
         }
+        
     }
-    private void OnTriggerExit(Collider other)
-    {
-        if(other.CompareTag("Player"))
-        {
-            enemyAnimator.SetBool("attack",false);
-            playerAnimate.palyerAnimator.SetBool("attack",false);
-        }
-    }
-    private void MoveTowardsPlayer(Vector3 direction)
+    private void MoveTowardsPlayer(Vector3 direction, Transform enemyTransform)
     {
         enemyBody.MovePosition((Vector3)transform.position + (direction*moveSpeed*Time.deltaTime));
-        enemy.localRotation = Quaternion.Euler(enemy.transform.localRotation.eulerAngles.x, enemy.transform.localRotation.eulerAngles.y, enemy.transform.localRotation.eulerAngles.z);
+        enemyTransform.localRotation = Quaternion.Euler(enemyTransform.transform.localRotation.eulerAngles.x, enemyTransform.transform.localRotation.eulerAngles.y, enemyTransform.transform.localRotation.eulerAngles.z);
     }
 
 }

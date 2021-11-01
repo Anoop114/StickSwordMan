@@ -4,12 +4,18 @@ public class EnemyAttack : MonoBehaviour
 {
     [Header("Refrance")]
     public GameObject enemy;
+    public GameObject looseGameUI;
+    public GameObject playerUI;
     private PlayerHealthAndWeapon playerHealth;
     private EnemyHealthAndAttack enemyHealth;
+    private TextUpdate playerTextUpdate;
+    private GameManager manager;
 
     void Start()
     {
         enemyHealth = enemy.GetComponent<EnemyHealthAndAttack>();
+        playerTextUpdate = playerUI.GetComponent<TextUpdate>();
+        manager = playerUI.GetComponent<GameManager>();
     }
 
    void OnTriggerEnter(Collider other)
@@ -18,12 +24,12 @@ public class EnemyAttack : MonoBehaviour
         {
             playerHealth = other.GetComponent<PlayerHealthAndWeapon>();
             playerHealth.health -= enemyHealth.enemySwardDamage;
-            
+            playerTextUpdate.UpdateText();
             if(playerHealth.health <= 0)
             {
-                playerHealth.health = 100;
-                Debug.Log(playerHealth.health);
                 Destroy(other.gameObject);
+                manager.PauseGame();
+                looseGameUI.SetActive(true);
             }
         }
     }
