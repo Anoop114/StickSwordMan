@@ -1,75 +1,48 @@
 using UnityEngine;
 using System;
+using CnControls;
 public class Movement : MonoBehaviour
 {
-    [Header("Refrance")]
-    public SwipeControl swipe;
-    public GameObject playerBody;
+    [Header("Straight the player")]
+    public Transform[] bones;
+    public bool keepBonesStraight;
     public Animator palyerAnimator;
 
     [Header("Change Values")]
     public float speed;
-
-    //private
-    private Transform localTransform;
-    private Transform playerTransform;
+    public float turnSpeed;
+    private Rigidbody playerRb;
 
     private void Start()
     {
-        playerTransform = playerBody.GetComponent<Transform>();
-        localTransform = this.GetComponent<Transform>();
+        playerRb = this.GetComponent<Rigidbody>();
+        palyerAnimator.SetBool("run",true);
+    }
+
+    private void Update() {
+        if(Input.GetMouseButton(0))
+        {
+            Vector3 touchMagnitude = new Vector3(CnInputManager.GetAxis("Horizontal"),CnInputManager.GetAxis("Vertical"),0);
+            Vector3 touchPos = transform.position + touchMagnitude;
+            Vector3 touchDir = touchPos - transform.position;
+            float angle = Mathf.Atan2(touchDir.y,touchDir.x) * Mathf.Rad2Deg;
+            angle -= 90;
+            Quaternion rot = Quaternion.AngleAxis(angle,Vector3.down);
+            this.transform.rotation = Quaternion.Lerp(transform.rotation,rot,turnSpeed * Mathf.Min(Time.deltaTime,0.04f));
+        }
     }
     void FixedUpdate()
     {
-        if(swipe.SwipeLeft)
-        {
-            Debug.Log("left");
-            MovePlayerLeft();
-            // palyerAnimator.SetBool("attack",false);
-        }
-        else if(swipe.SwipeRight)
-        {
-            Debug.Log("right");
-            MovePlayerRight();
-            // palyerAnimator.SetBool("attack",false);
-        }
-        else if(swipe.SwipeDown)
-        {
-            Debug.Log("down");
-            MovePlayerBackword();
-            palyerAnimator.SetBool("back",true);
-        }
-        else if(swipe.SwipeUp)
-        {
-            Debug.Log("up");
-            MovePlayerForward();
-            palyerAnimator.SetBool("jump",true);
-        }
-        else
-        {
-            // playerTransform.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        }
-        
+        playerRb.MovePosition(transform.position + transform.forward * speed * Time.deltaTime);
     }
 
-    private void MovePlayerRight()
-    { 
-        playerTransform.position = Vector3.MoveTowards(playerTransform.position,Vector3.right,speed*Time.deltaTime);
+    private void LateUpdate() {
+        if(keepBonesStraight)
+        {
+            foreach (Transform item in bones)
+            {
+                item.eulerAngles = new Vector3(0,item.eulerAngles.y,item.eulerAngles.z);
+            }
+        }
     }
-    private void MovePlayerLeft()
-    { 
-        playerTransform.position = Vector3.MoveTowards(playerTransform.position,Vector3.left,speed*Time.deltaTime);
-    }
-    private void MovePlayerForward()
-    {
-        playerTransform.position = Vector3.MoveTowards(playerTransform.position,Vector3.forward,speed*Time.deltaTime);
-        
-        palyerAnimator.SetBool("jump",false);
-    }
-    private void MovePlayerBackword()
-    { 
-        playerTransform.position = Vector3.MoveTowards(playerTransform.position,Vector3.back,speed*Time.deltaTime);
-        palyerAnimator.SetBool("back",false);
-    }
-    
 }

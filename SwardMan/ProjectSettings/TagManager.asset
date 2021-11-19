@@ -5,9 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Sward
-  - Shield
   - EnemySward
   - Enemy
+  - EnemyCilinder
+  - EnemyCylinder
   layers:
   - Default
   - TransparentFX
